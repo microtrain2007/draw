@@ -129,7 +129,7 @@ var draw = (function() {
         ctx.stroke();
       },
   
-  
+      //Draw a path
       drawPath: function() {
         //console.log({x1:x,y1:y,x2:x2,y2:y2});
         //Start by using random fill colors.
