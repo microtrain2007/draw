@@ -39,6 +39,8 @@ var draw = (function() {
     //stroke color
     var stroke='';
 
+    //fill color
+    var fill='';
 
     return {
         //Set the x,y coords based on current event data
@@ -93,6 +95,19 @@ var draw = (function() {
         }
         return this.randColor();
       },
+
+      //A setter for fill
+      setFillColor: function(color){
+        fill = color;
+      },
+
+      //A getter for fill
+      getFillColor: function(){
+        if(fill.length > 6){
+        return fill;
+        }
+        return this.randColor();
+      },
     
       setIsDrawing: function(bool) {
       isDrawing = bool;
@@ -124,7 +139,8 @@ var draw = (function() {
         drawRect: function(){
         ctx.strokeStyle = this.getStrokeColor();
         //Start by using random fill colors.
-        ctx.fillStyle = '#'+Math.floor(Math.random()*16777215).toString(16);      
+        ctx.fillStyle = this.getFillColor();
+        // ctx.fillStyle = '#'+Math.floor(Math.random()*16777215).toString(16);      
         ctx.fillRect (x1,y1,(x2-x1),(y2-y1));
         ctx.stroke();
       },
@@ -144,7 +160,8 @@ var draw = (function() {
         drawCircle: function() {
             ctx.strokeStyle = this.getStrokeColor();
             // ctx.strokeStyle = '#'+Math.floor(Math.random()*16777215).toString(16);
-            ctx.fillStyle = '#'+Math.floor(Math.random()*16777215).toString(16);
+            ctx.fillStyle = this.getFillColor();
+            // ctx.fillStyle = '#'+Math.floor(Math.random()*16777215).toString(16);
         
             let a = (x1-x2)
             let b = (y1-y2)
@@ -235,6 +252,15 @@ var draw = (function() {
     draw.setStrokeColor(document.getElementById('strokeColor').value);
   });
   
-    document.getElementById('randStrokeColor').addEventListener('change', function(){
-    draw.setStrokeColor('');
-    });
+  document.getElementById('randStrokeColor').addEventListener('change', function(){
+  draw.setStrokeColor('');
+  });
+
+  document.getElementById('fillColor').addEventListener('change', function(){
+  draw.setFillColor(document.getElementById('fillColor').value);
+  });
+    
+  document.getElementById('randFillColor').addEventListener('change', function(){
+  draw.setFillColor('');
+  });
+      
