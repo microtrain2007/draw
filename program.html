@@ -2,23 +2,35 @@
 <html lang="en">
     <head>
        <meta charset="UTF-8">
-       <title>Draw</title>
+       <title>Draw 2005</title>
        <meta name="viewport" content="width=device-width, initial-scale=1.0">
        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css">
        <link rel="stylesheet" href="src/css/main.css">
     </head>
     <body>
-      <div class="wrapper">
+        <h1><p style="text-align:center">Draw on Canvas</p></h1>
+        <div class="wrapper">
         <nav>
           <ul>
             <li><button id="btnRect">Rectangle</button></li>
             <li><button id="btnLine">Line</button></li>
             <li><button id="btnCircle">Circle</button></li>
             <li><button id="btnPath">Path</button></li>
+            
+            <li class="flex">
+                <div>
+                    <label for="strokeColor">Stroke</label>
+                    <input type="color" id="strokeColor"><br><br>
+                    <input type="checkbox" id="randStrokeColor">
+                    <label for="randStrokeColor">Random</label>
+                </div>
+            </li>
 
-
+            <li class="flex">
             <li id="trackX">X: 0</li>
             <li id="trackY">Y: 0</li>
+            </li>
+
           </ul>
         </nav>
         <main></main>

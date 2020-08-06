@@ -16,141 +16,168 @@ var draw = (function() {
   
       //current x,y position
       x=0,
-      y=0,
+      y=0;
   
-      //starting x,y
-      x1=0,
-      y1=0,
+    //starting x,y
+    x1=0,
+    y1=0,
+
+    //ending x,y
+    x2=0,
+    y2=0;
+
+    //Tracks the last x,y state
+    lx = false,
+    ly = false,
   
-      //ending x,y
-      x2=0,
-      y2=0,
-  
-      //Tracks the last x,y state
-      lx = false,
-      ly = false,
-  
-      //What shape are we drawing?
-      shape='',
-  
-      //Are we drawimg a path?
-      isDrawing=false;
-  
+    //What shape are we drawing?
+    shape='';
+
+    //Do we want to draw?
+    isDrawing=false;
+
+    //stroke color
+    var stroke='';
+
+
     return {
-  
-      //Set the x,y coords based on current event data
-      setXY: function(evt) {
-  
-        //Track last x,y position before setting the current posiiton.
-        lx=x;
-        ly=y;
-  
-        //Set the current x,y position
-        x = (evt.clientX - rect.left) - canvas.offsetLeft;
-        y = (evt.clientY - rect.top) - canvas.offsetTop;
-      },
-  
+        //Set the x,y coords based on current event data
+        setXY: function(evt) {
+
+            //Track the last x,y position before setting the current position.
+            lx=x;
+            ly=y;
+        
+            //Set the current x,y position
+            x = (evt.clientX - rect.left) - canvas.offsetLeft;
+            y = (evt.clientY - rect.top) - canvas.offsetTop;
+        },
+    
       //Write the x,y coods to the target div
       writeXY: function() {
         document.getElementById('trackX').innerHTML = 'X: ' + x;
         document.getElementById('trackY').innerHTML = 'Y: ' + y;
       },
   
-      //Set the x1,y1
       setStart: function() {
         x1=x;
         y1=y;
       },
-  
-      //Set the x2,y2
+      
       setEnd: function() {
         x2=x;
         y2=y;
       },
-  
+
+
+      
       //Sets the shape to be drawn
       setShape: function(shp) {
         shape = shp;
       },
-  
-      getShape: function() {
-        return shape;
+
+      //Set a random color
+      randColor: function(){
+        return '#' + Math.floor(Math.random()*16777215).toString(16);
       },
-  
+
+      //A setter for stroke
+      setStrokeColor: function(color){
+      stroke = color;
+      },
+
+      //A getter for stroke
+      getStrokeColor: function(){
+        if(stroke.length > 6){
+        return stroke;
+        }
+        return this.randColor();
+      },
+    
       setIsDrawing: function(bool) {
-        isDrawing = bool;
+      isDrawing = bool;
       },
-  
+      
       getIsDrawing: function() {
         return isDrawing;
       },
-  
-      //Draws the selected shape
+      
       draw: function() {
         ctx.restore();
         if(shape==='rectangle')
         {
           this.drawRect();
-        } else if( shape==='line' ) {
+        } else if(shape==='line') {
           this.drawLine();
-        } else if( shape==='path' ) {
-          this.drawPath();
-        } else if( shape==='circle' ) {
+        } else if(shape==='circle') {
           this.drawCircle();
-        } else {
+        } else if(shape==='path') {
+          this.drawPath();
+          } else {
           alert('Please choose a shape');
         }
         ctx.save();
       },
-  
-      //Draw a circle
-      drawCircle: function() {
-  
-        ctx.strokeStyle = '#'+Math.floor(Math.random()*16777215).toString(16);
-        ctx.fillStyle = '#'+Math.floor(Math.random()*16777215).toString(16);
-  
-        let a = (x1-x2)
-        let b = (y1-y2)
-        let radius = Math.sqrt( a*a + b*b );
-  
-        ctx.beginPath();
-        ctx.arc(x1, y1, radius, 0, 2*Math.PI);
-        ctx.stroke();
-        ctx.fill();
-      },
-  
-      //Draw a line
-      drawLine: function() {
+         
+        //Draw a rectangle
+        // drawRect: function(x,y,h,w) {
+        drawRect: function(){
+        ctx.strokeStyle = this.getStrokeColor();
         //Start by using random fill colors.
-        ctx.strokeStyle = '#'+Math.floor(Math.random()*16777215).toString(16);
+        ctx.fillStyle = '#'+Math.floor(Math.random()*16777215).toString(16);      
+        ctx.fillRect (x1,y1,(x2-x1),(y2-y1));
+        ctx.stroke();
+      },
+
+        //Draw a line
+        drawLine: function() {
+        //Start by using random fill colors.
+        // ctx.strokeStyle = '#'+Math.floor(Math.random()*16777215).toString(16);
+        ctx.strokeStyle = this.getStrokeColor();
         ctx.beginPath();
         ctx.moveTo(x1, y1);
         ctx.lineTo(x2, y2);
         ctx.stroke();
       },
-  
-      //Draw a path
-      drawPath: function() {
-        //console.log({x1:x,y1:y,x2:x2,y2:y2});
-        //Start by using random fill colors.
-        ctx.strokeStyle = '#'+Math.floor(Math.random()*16777215).toString(16);
-        ctx.beginPath();
-        ctx.moveTo(lx, ly);
-        ctx.lineTo(x, y);
-        ctx.stroke();
-      },
-  
-      //Draw a rectangle
-      drawRect: function() {
-        //Start by using random fill colors.
-        ctx.fillStyle = '#'+Math.floor(Math.random()*16777215).toString(16);
-        ctx.fillRect (x1,y1,(x2-x1),(y2-y1));
-      },
-  
-      getCanvas: function(){
-        return canvas;
-      },
-  
+
+        //Draw a circle
+        drawCircle: function() {
+            ctx.strokeStyle = this.getStrokeColor();
+            // ctx.strokeStyle = '#'+Math.floor(Math.random()*16777215).toString(16);
+            ctx.fillStyle = '#'+Math.floor(Math.random()*16777215).toString(16);
+        
+            let a = (x1-x2)
+            let b = (y1-y2)
+            let radius = Math.sqrt( a*a + b*b );
+        
+            ctx.beginPath();
+            ctx.arc(x1, y1, radius, 0, 2*Math.PI);
+            ctx.stroke();
+            ctx.fill();
+        },
+
+        //Draw a path
+        drawPath: function() {
+            //Start by using random fill colors.
+            ctx.strokeStyle = this.getStrokeColor();
+            // ctx.strokeStyle = '#'+Math.floor(Math.random()*16777215).toString(16);
+            ctx.beginPath();
+            ctx.moveTo(lx, ly);
+            ctx.lineTo(x, y);
+            ctx.stroke();
+        },
+                    
+        getShape: function() {
+        return shape;
+        },
+                  
+        getCanvas: function(){
+            return canvas;
+        },
+
+     
+
+
       //Initialize the object, this must be called before anything else
       init: function() {
         canvas.width = mWidth;
@@ -164,7 +191,23 @@ var draw = (function() {
   
   //Initialize draw
   draw.init();
-  
+
+    document.getElementById('btnRect').addEventListener('click',function(){
+    draw.setShape('rectangle');
+    }, false);
+
+    document.getElementById('btnLine').addEventListener('click',function(){
+        draw.setShape('line');
+    }, false);
+
+    document.getElementById('btnCircle').addEventListener('click',function(){
+        draw.setShape('circle');
+    }, false);
+
+    document.getElementById('btnPath').addEventListener('click',function(){
+        draw.setShape('path');
+    }, false);
+
   //Add a mousemove listener to the canvas
   //When the mouse reports a change of position use the event data to
   //set and report the x,y position on the mouse.
@@ -175,35 +218,23 @@ var draw = (function() {
       draw.draw();
     }
   }, false);
-  
-  //Add a mousedown listener to the canvas
+      
   //Set the starting position
   draw.getCanvas().addEventListener('mousedown', function() {
     draw.setStart();
     draw.setIsDrawing(true);
   }, false);
-  
-  //Add a mouseup listener to the canvas
-  //Set the end position and draw the rectangle
+
   draw.getCanvas().addEventListener('mouseup', function() {
     draw.setEnd();
     draw.draw();
     draw.setIsDrawing(false);
   }, false);
+
+  document.getElementById('strokeColor').addEventListener('change', function(){
+    draw.setStrokeColor(document.getElementById('strokeColor').value);
+  });
   
-  document.getElementById('btnRect').addEventListener('click', function(){
-      draw.setShape('rectangle');
-  }, false);
-  
-  document.getElementById('btnLine').addEventListener('click', function(){
-      draw.setShape('line');
-  }, false);
-  
-  document.getElementById('btnCircle').addEventListener('click', function(){
-      draw.setShape('circle');
-  }, false);
-  
-  document.getElementById('btnPath').addEventListener('click', function(){
-      draw.setShape('path');
-  }, false);
-  
+    document.getElementById('randStrokeColor').addEventListener('change', function(){
+    draw.setStrokeColor('');
+    });
