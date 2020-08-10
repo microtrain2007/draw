@@ -42,6 +42,10 @@ var draw = (function() {
   //fill color
   var fill='';
 
+  //Draw 3-point Triangle
+  var points = [];
+  var i = 0;
+
   return {
       //Set the x,y coords based on current event data
       setXY: function(evt) {
@@ -71,7 +75,21 @@ var draw = (function() {
       y2=y;
     },
 
+  //Draw 3-point Triangle
+  setPoint: function(){
 
+      points[i]=[];
+      points[i]['x']=x;
+      points[i]['y']=y;
+
+      if(points.length>2){
+          this.draw();
+          i=0;
+          points=[];
+      }else{
+          i++;
+      }        
+  },
     
     //Sets the shape to be drawn
     setShape: function(shp) {
@@ -130,12 +148,14 @@ var draw = (function() {
         this.drawPath();
       } else if(shape==='triangle') {
           this.drawTriangle();
+      } else if(shape==='3-point') {
+          this.draw3Point();
       } else {
       alert('Please choose a shape');
       }
       ctx.save();
     },
-       
+
       //Draw a rectangle
       // drawRect: function(x,y,h,w) {
       drawRect: function(){
@@ -189,10 +209,8 @@ var draw = (function() {
     //Draw a triangle
     drawTriangle: function(){
 
-      //x1,y1 to x2,y2 is the first line
-      //we will use the first point +/- 
-      //(depending on the direction of
-      //the mouse movement) the result of 
+      //x1,y1 to x2,y2 is the first line we will use the first point +/- 
+      //(depending on the direction of the mouse movement) the result of 
       //PT to add a third point. 
       var a = (x1-x2);
       var b = (y1-y2);
@@ -223,7 +241,24 @@ var draw = (function() {
       ctx.stroke();
       ctx.fill();
   },
-  
+
+      //Draw 3-point Triangle
+      draw3Point: function(){
+
+      ctx.fillStyle = this.getFillColor();
+      ctx.strokeStyle = this.getStrokeColor();
+
+      ctx.beginPath();
+
+      ctx.moveTo(points[0]['x'], points[0]['y']);
+      ctx.lineTo(points[1]['x'], points[1]['y']);
+      ctx.lineTo(points[2]['x'], points[2]['y']);
+      ctx.lineTo(points[0]['x'], points[0]['y']);
+
+      ctx.stroke();
+      ctx.fill();
+  },
+
       getShape: function() {
       return shape;
       },
@@ -269,6 +304,10 @@ draw.init();
       draw.setShape('triangle');
   }, false);
 
+  document.getElementById('btn3Point').addEventListener('click', function(){
+      draw.setShape('3-point');
+    });
+    
 //Add a mousemove listener to the canvas
 //When the mouse reports a change of position use the event data to
 //set and report the x,y position on the mouse.
@@ -282,14 +321,24 @@ draw.getCanvas().addEventListener('mousemove', function(evt) {
     
 //Set the starting position
 draw.getCanvas().addEventListener('mousedown', function() {
+  //Draw 3-point Triangle
+  if(draw.getShape()!=='3-point'){
   draw.setStart();
   draw.setIsDrawing(true);
+  }
 }, false);
 
 draw.getCanvas().addEventListener('mouseup', function() {
+  //Draw 3-point Triangle
+  if(draw.getShape()!=='3-point'){
   draw.setEnd();
   draw.draw();
   draw.setIsDrawing(false);
+  }
+  //Draw 3-point Triangle
+  if(draw.getShape()==='3-point'){
+  draw.setPoint();
+  }  
 }, false);
 
 document.getElementById('strokeColor').addEventListener('change', function(){
@@ -307,3 +356,4 @@ draw.setFillColor(document.getElementById('fillColor').value);
 document.getElementById('randFillColor').addEventListener('change', function(){
 draw.setFillColor('');
 });
+    
